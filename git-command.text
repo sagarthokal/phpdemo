@@ -1,0 +1,38 @@
+$ git config --global user.name "sagarthokal"
+
+$ git config --global user.email "sagarthokal@mypcot.com"
+
+$ git status
+
+$ git pull origin main
+
+$ git add -a
+
+$ git commit -m "comment"
+
+$ git push -u origin main
+OR
+$ git push -f origin main
+
+git pull --rebase
+git push
+
+
+$ git gui &
+
+
+
+git init
+git remote add origin <HTTPS URL FOR GIT REPO>
+git remote add origin https://github.com/Mypcot-Infotech/hansa-icici-dashboards.git
+
+
+
+
+echo "# maksu" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/USERNAME/maksu.git
+git push -u origin main
