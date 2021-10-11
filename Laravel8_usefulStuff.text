@@ -1,0 +1,495 @@
+
+
+------------------------------------------------------------------
+ laravel step by step
+ ------------------------------------
+Why to use laravel ::
+>>strong command line support
+>>large community
+>>regular updates ( every 6 months)
+>>fas, simple
+
+
+composer : download it from >>> getcomposer.org
+Add - php.exe path
+
+
+What is composer : Dependency manager for PHP
+benefit :  we dont need to install dependecny manually 
+
+**All dependency downloaded in vendor folder**
+
+composer dump-autoload  -- to publish autoload part
+
+------------- *****Requirements*****--------------
+
+PHP 7.3+ 
+composer
+
+----------------*******To Create Project*********--------------
+
+laravel installer
+OR 
+composer create-project
+
+
+######## Using Laravel installer on windows ::
+composer global require laravel/installer ( run only once)
+
+laravel new example-app
+
+cd example-app
+
+php artisan serve
+
+
+###### Another way to create laravel project ::
+composer create-project laravel/laravel example-app 
+
+cd example-app
+
+php artisan serve
+
+
+------------------ Do this initially ---------------
+
+If anyone wants to make the application public, the more easy and fastest way is:
+
+1) Rename the "server.php" file in root directory, in "index.php"
+2) Move your .htaccess from public folder to root directory
+3) Make your directory accessible to Apache2 (set all file permissions to 777).
+4) replace file name  .env.example with .env
+
+Now Run project with projectName
+localhost/projectName/ControllerName@MethodName
+
+
+------------------****** Folder Structure *********-----------
+Where we write :
+				HTML
+				Model
+				Controller
+				Routing
+				File Store
+				Config
+				Database
+				
+
+NOTE :: First running file is public>index.php
+
+------------------***** Create first file *****----------------
+Create view File :: 
+Resource>view> hello.blade.php
+Go to : routes\web.php
+mapp view file.
+
+-----------------***** Routing *****-------------------
+
+In route file
+Route::get('/', function () {
+    return view('hello');
+	//to Redirect
+	//return redirect("hello");
+});
+##URL and Page Name..
+
+Alternate way ,
+Route::view('hello','hello');
+
+NOTE::
+routes/web.php => are the routes for people with browsers => pretty pages with inputs, colors, fancy stuff
+
+routes/api.php => are the routes for applications who needs/wants data from your app/website => key/value data only
+
+-----------------***** Create controller *****-------------------
+
+>> php artisan make:controller Users
+  Check in directory :: app>http>controller User controller created
+  
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class Users extends Controller
+{
+    //create function
+    public function index(){
+        echo "Calling User Controller";
+    }
+}
+ 
+TO call Controller method:
+Go to web.php >>
+use App\Http\Controllers\Users;
+Route::get("users",[Users::class,'index']);
+
+------------- **** calling view from Routing and controller **** --------------------
+
+Route::get("users",[Users::class,'index']);
+
+Route::get("userpage/{name?}",[Users::class,'displayPage']);
+***NOTE :::  ? is the  optional parameter ***
+
+Function written in user controller ::
+public function displayPage($name=""){
+	return view('userpage',['name' => $name]);
+}
+
+
+------------- **** Create component **** --------------------
+Eg. Header for website will same for multiple pages
+
+>> php artisan make:component Header ( component name as Header)
+
+2 files will be created :
+1) >app>>view>>component>>Header.php
+2) >resource>>view>>component>> header.blade.php
+
+
+------------- **** Blade Template **** --------------------
+Always make file with .blade.php extension
+------------------------------------------------------
+
+------------- **** middleware **** --------------------
+Middleware : piece of code that can filter out user requests
+Eg. login 
+If user logged in then access entire website
+
+Middleware types ?
+Global , group, routed >> mentioned in kernel file
+
+php artisan make:middleware ageCheck
+
+>>app>>http>>Middleware>>ageCheck
+inside handle function make changes...
+
+
+****************************************************************************
+How to use Middleware for authentication ::
+
+1) php artisan make:middleware BasicAuth
+
+2) load middleware class in APP\Http\Kernel
+	 $routeMiddleware = [
+		//User defined 
+		'basicAuth' => \App\Http\Middleware\BasicAuth::class,
+		
+	];
+ 
+3) method routes for authentication
+//GROUP middleware
+	Route::middleware(['basicAuth'])->group(function () {
+		Route::get("/listData",'ApiController@getData');
+	});
+	
+	//
+	Route::Get('/{age}',function($age){  
+		return view('welcome');  
+	})-> middleware('age');  
+	
+****************************************************************************	
+FOR JWT Token : MOST IMP docs link
+https://jwt-auth.readthedocs.io/en/develop/laravel-installation/
+https://jwt-auth.readthedocs.io/en/docs/quick-start/#update-your-user-model
+
+
+
+****************************************************************************
+-------------------- **** Create Model **** --------------------
+
+1) create model with migration
+	php artisan make:model DevisionOfficerArea -m
+
+-------------------- **** How to use Helpers **** --------------------
+1) Create Folder Helpers.
+  -> app\Http\..
+   Here you can create multiple helper files as required in project.
+   
+2)   Go to app\Http\Helpers\
+And Create Apihelper.php file and create class, function in it
+
+3) Open composer.json file
+
+Add files array in autoload Key..
+
+"autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        },
+        "files": [
+            "app/Http/Helpers/Apihelper.php"
+        ]
+    },
+
+
+
+NOTE:: to load helper always RUN below command.
+composer dump-autoload
+
+****************************************************************************
+-------------------- **** RSA Implementaion **** --------------------
+
+1)  composer require phpseclib/phpseclib:~2.0
+
+2) load in Class at top
+	use phpseclib\Crypt\RSA;
+	
+	
+	$rsa = new RSA();
+	$publickey = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCSFG4JoAJkyQeDhGgNx+MlFMAAt/jA/c+xzSnfvnk7OHev9GKKkfXUHRnsXdw1aA4L88gnZbVSF/x8Xt2q8FUeK8zpJeLb4pKBZ8YcDRSJckNPd/PcIGGuyD7Qv0PYj18Amg21rTFR6Ox+7uTDUWIkMF48QIcujXSEuF5ZqrAJfwIDAQAB';
+	$rsa->loadKey($publickey);
+	$rsa->setEncryptionMode(2);
+	$data = 'mypcotmumbai1234';
+	$output = $rsa->encrypt($data);
+	echo base64_encode($output);
+
+	echo ' ///////////////////////encryption end////////////////////////////// ';
+
+
+	$privatekey = 'MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAJIUbgmgAmTJB4OEaA3H4yUUwAC3+MD9z7HNKd++eTs4d6/0YoqR9dQdGexd3DVoDgvzyCdltVIX/Hxe3arwVR4rzOkl4tvikoFnxhwNFIlyQ09389wgYa7IPtC/Q9iPXwCaDbWtMVHo7H7u5MNRYiQwXjxAhy6NdIS4XlmqsAl/AgMBAAECgYA+luJO3XApHrlJcIHk5bA9QxbBOBItHpLO68j1RPdMmHUvvtY56TAbIhzpWY3wlBTwqhMoTjvSYNSdtUfk5fSRvjACa6la5Zk/eIBa4m74CEU7J8KjHq68PoqTfQx0BXQnA1J/5zOAMXPWun2dvFhPA3ZaX20oC8iQJ86mPQGlAQJBAPaYLYS8b46brLahGUPSZHdMS/1JWr89CBZ3wSMei8wswPog8+BJwR0PIHWWEWMEPweP6nz+GHePjzEIkwaNeCkCQQCXpswBm6RZ6DKdmYeAYUPWqyFo4+DpXit1w2VPtf350pc5StAnKpkQ0vAQ+LQHQVjfPTMUIeOIirQHtevgmUlnAkBA7Mo3Q4G/s18i6oGDaNaIzm7HblPVPBVwDPGt9HHsPPBGKvzq1aBhrUTnkK5dOpX5wLuFU0VP3V1fFJnZRNAZAkBEHBuf1UFZR9oDwkKDPCv1q+JTc5U9+pdWSq2jwT8SBqz4hEs8a/tW/QXo+WoRoB3EFX5tWlMQrgrxM5l+xBmdAkARVWsTOhLL6GWSjLQF8fi9k4RJMviuogKMN9UNk6QqrVZ7sYZR73Dbrme0yy1Tg5OjVPIQHIq+14Px0I8LcH16';
+	$rsa->loadKey($privatekey);
+	$rsa->setEncryptionMode(2);
+	$input = $rsa->decrypt($output);
+	echo $input;
+
+****************************************************************************
+
+------------- **** Show list from DB tbl **** --------------------
+php artisan make:controllers Member
+
+
+****************************************************************************
+--------- MODEL SETUP --- TO INSERT N UPDATE in DB 
+php artisan make:model Demo -m 
+
+In Migration File :: 
+Schema::create('demos', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->nullable();
+            $table->string('type');
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('NULL ON UPDATE CURRENT_TIMESTAMP'))->nullable();
+        });
+
+php artisan migrate		
+
+In model ::
+class Demo extends Model
+{
+    use HasFactory;
+    public $timestamps = false;
+    protected $fillable = [
+        'name','type'
+    ];
+    protected $guarded = ['*'];
+}
+
+php artisan migrate
+
+routes/api.php
+Route::post("/addDemoData/{id?}",'ApiController@addDemoData');
+
+
+ApiController
+public function addDemoData(Request $request 
+
+	if(isset($_GET['id'])) {
+		$Demo = Demo::find($_GET['id']);
+		$msg = "Demo Data updated successfully.";
+	}else{
+		$Demo = new Demo;
+		$msg = "Demo Data added successfully.";
+	}   
+	$Demo->name = $request->name;
+	$Demo->type = $request->type;
+	$Demo->save();
+	$Demo_id = $Demo->id;
+	//$input = $request->all();
+	//$st = Demo::create($input);
+	return response()->json([
+	"success" => true,
+	"message" => $msg,
+	"id" => $Demo_id
+	]);
+}
+
+
+
+php artisan make:model GeneralSettings -m
+Model created successfully.
+Created Migration: 2021_10_05_100609_create_general_settings_table
+PS D:\Xampp-7.3\htdocs\Laravel\lara_proj1> php artisan migrate
+Migrating: 2021_10_05_100609_create_general_settings_table
+Migrated:  2021_10_05_100609_create_general_settings_table (218.73ms)
+PS D:\Xampp-7.3\htdocs\Laravel\lara_proj1> php artisan make:migration add_field_to_generalSettings_tabel --table=general_settings
+Created Migration: 2021_10_05_113556_add_field_to_general_settings_tabel
+
+
+
+### NOTE  : Always specifiy tbl name for making altering in tbl structure
+--table=TblName
+
+##Install Once when rename/altering in tbl 
+composer require doctrine/dbal
+
+php artisan make:migration rename_column_name_in_namemasters_table --table=name_masters
+Created Migration: 2021_10_08_111730_rename_column_name_in_namemasters_table
+
+class RenameColumnNameInNamemastersTable extends Migration
+{
+    public function up(){
+		//TO change column name
+		Schema::table('name_masters', function (Blueprint $table) {
+					$table->renameColumn('field_value', 'value');
+				});
+			
+	}
+	
+	public function down()
+    {
+        Schema::table('name_masters', function (Blueprint $table) {
+            //
+        });
+    }
+	
+	
+	//To change column data type	(string to text)
+	Schema::table('name_masters', function (Blueprint $table) {
+		$table->text('value')->change();
+	});	
+}	
+------------------------ **** DB Seeder And Factory ***** --------------------------------------
+
+
+https://dev.to/shanisingh03/generate-dummy-laravel-data-with-model-factories-seeder-gg4
+https://laraveldaily.com/generating-fake-seeds-data-with-faker-package/
+
+1) php artisan make:seeder DemoSeeder
+
+<?php  
+namespace Database\Seeders;
+use Illuminate\Database\Seeder;
+use App\Models\Demo;
+class DemoSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        Demo::create([
+            'name' => 'Sagar',
+            'type' => 'A'
+        ]);
+    }
+}
+
+2)  php artisan db:seed --class=DemoSeeder
+Database seeding completed successfully. ( only 1 record is created)
+
+----
+
+3)php artisan make:factory DemoFactory --model=Demo
+Factory created successfully.
+
+<?php
+namespace Database\Factories;
+use App\Models\Demo;
+use Illuminate\Database\Eloquent\Factories\Factory;
+//New added
+use Illuminate\Support\Str;
+
+class DemoFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Demo::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'name' => $this->faker->name(),
+            'type' => Str::random(2)
+        ];
+    }
+}
+
+4) php artisan make:seed DemoFactorySeeder
+Seeder created successfully. 
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use App\Models\Demo;
+
+
+class DemoFactorySeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        Demo::factory()->count(50)->create();
+    }
+}
+
+5) php artisan db:seed --class=DemoFactorySeeder
+Database seeding completed successfully. (50 rows created in tbl Demo)
+
+6) Now for All seeds in one go
+Open  Database\Seeders\DatabaseSeeder.php
+
+<?php
+namespace Database\Seeders;
+use Illuminate\Database\Seeder;
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        // \App\Models\User::factory(10)->create();
+		//Call Multiple Seeder from here
+        $this->call([
+            DemoSeeder::class,
+            DemoFactorySeeder::class
+        ]);
+
+    }
+}
+
+
+
+
+**************************************************************************************
+https://www.bestinterviewquestion.com/laravel-interview-questions
+
+------------------------ **** Errors ***** ---------------------------------------
+Illuminate\Contracts\Container\BindingResolutionException: Target class [basicAuth] does not exist. 
+
+**************************************************************************************
+
+------------------------ **** YouTube Link ***** ---------------------------------------
+https://www.youtube.com/watch?v=OJtGeqgXwfo
+
+
