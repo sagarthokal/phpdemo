@@ -24,6 +24,11 @@ composer dump-autoload  -- to publish autoload part
 ##if you are cloning from git..
 -composer update
 -create .env file and copy code of .env.example  and c
+Also, do this.
+php artisan key:generate
+php artisan jwt:secret
+php artisan cache:clear
+php artisan config:clear
 - run the project.. it will work.
 ------------- *****Requirements*****--------------
 
