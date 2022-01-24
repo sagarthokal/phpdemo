@@ -69,6 +69,12 @@ If anyone wants to make the application public, the more easy and fastest way is
 3) Make your directory accessible to Apache2 (set all file permissions to 777).
 4) replace file name  .env.example with .env
 
+After Starting Server if you get Error like.
+No application encryption key has been specified.
+Then  Generate Key.. Using
+>>php artisan key:generate
+Your Workspace will RUN properly now.
+
 Now Run project with projectName
 localhost/projectName/ControllerName@MethodName
 
